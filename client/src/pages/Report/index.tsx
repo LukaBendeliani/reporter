@@ -17,6 +17,7 @@ const Reports: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
+    const [shouldLoad, setShouldLoad] = useState(false);
     const [authToken] = useLocalStorage('AUTH_TOKEN', undefined);
     const [parameters, setParameters] = useState<Record<string, string | number>>();
 
@@ -28,7 +29,16 @@ const Reports: React.FC = () => {
     const { data: table, refetch } = useQuery<T | undefined>(
         ['formReport'],
         () => authToken && id && formReport(authToken, id, parameters, page),
-        { enabled: false }
+        {
+            enabled: false,
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            select: (data) =>
+                ({
+                    ...data,
+                    data: data?.data.map((rec) => ({ ...rec, key: rec['ID'] })),
+                } as T),
+        }
     );
 
     useEffect(() => {
@@ -37,7 +47,9 @@ const Reports: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        refetch();
+        if (shouldLoad) {
+            refetch();
+        }
     }, [parameters, page]);
 
     const onEscPress = (e: KeyboardEvent) => {
@@ -51,6 +63,7 @@ const Reports: React.FC = () => {
     };
 
     const onReportForm = (parameters: Record<string, string | number>) => {
+        setShouldLoad(true);
         setParameters(parameters);
     };
 

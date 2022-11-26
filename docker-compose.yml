@@ -3,19 +3,18 @@ services:
     app:
         build: ./server
         depends_on:
-            - postgres
+            - oracle-db
         ports:
             - '8080:8080'
         volumes:
             - ./:/usr/src/app/
-    postgres:
-        image: postgres:14.1-alpine
-        restart: always
-        environment:
-            - POSTGRES_USER=root
-            - POSTGRES_PASSWORD=root
-            - POSTGRES_DB=root
-        ports:
-            - '5432:5432'
-        volumes:
-            - ./database-seed.sql:/docker-entrypoint-initdb.d/database-seed.sql
+    # client:
+    #     build: ./client
+    #     depends_on:
+    #         - server
+    #     ports: '3000:3000'
+    # oracle-db:
+    #     build: ./db
+    #     ports:
+    #         - '1521:1521'
+    #         - '5500:5500'

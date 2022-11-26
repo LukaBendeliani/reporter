@@ -5,6 +5,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { useProfileGuard } from '../../hooks/usePorfileGuard';
 
 import './index.css';
+import { signIn } from '../../api/auth';
 
 const { Text } = Typography;
 
@@ -16,8 +17,8 @@ const SignIn: React.FC = () => {
 
     const onFinish = async (values: any) => {
         try {
-            // const { accessToken } = await dispatch(signIn(values) as any);
-            // setAuthToken(accessToken);
+            const { accessToken } = await signIn(values);
+            setAuthToken(accessToken);
         } catch (e) {
             setErrorMessage(`${e}`);
         }
